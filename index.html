@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Expense Tracker</h1>
+
+    <input type="text" id="title" placeholder="Lunch">
+    <input type="number" id="amount" placeholder="amount">
+    <select id="category">
+        <option>Food</option>
+        <option>Transport</option>
+        <option>Bills</option>
+    </select>
+    <button id="addBtn">Add expense</button>
+    <h2 id="total">Total: $0</h2>
+    <select id="currency">
+        <option>USD</option>
+        <option>EUR</option>
+        <option>JPY</option>
+    </select>
+    <button id="convertBtn">Convert total</button>
+    <p id="converted"></p>
+
+    <div id="filters">
+        <button data-category="All">All</button>
+        <button data-category="Food">Food</button>
+        <button data-category="Transport">Transport</button>
+        <button data-category="Bills">Bills</button>
+    </div>
+    <ul id="list"></ul>
+    
+
+
+
+
+    <script src="script.js"></script>
+</body>
+</html>
