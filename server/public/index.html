@@ -1,57 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Expense Tracker</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="card">
-        <h1>Expense Tracker</h1>
+  <div class="container">
+    <h1>Expense Tracker</h1>
 
-        <div id=authSection>
-            <h2>Login or Register</h2>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button id="loginBtn">Login</button>
-            <button id="registerBtn">Register</button>
-            <p id="authMessage"></p>
+    <div id="authSection" class="card">
+      <h2>Login or Register</h2>
+      <div class="form-row">
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+      </div>
+      <div class="button-row">
+        <button id="loginBtn">Login</button>
+        <button id="registerBtn" class="secondary">Register</button>
+      </div>
+      <p id="authMessage"></p>
+    </div>
+
+    <div id="appSection" style="display: none;">
+      <div class="top-bar">
+        <button id="logoutBtn" class="secondary small">Logout</button>
+      </div>
+
+      <div class="card total-card">
+        <p class="label">Total spent</p>
+        <h2 id="total">₱0</h2>
+        <div class="convert-row">
+          <select id="currency">
+            <option>USD</option>
+            <option>EUR</option>
+            <option>JPY</option>
+          </select>
+          <button id="convertBtn" class="secondary small">Convert total</button>
+          <span id="converted"></span>
         </div>
+      </div>
 
-        <div id="appSection" style="display: none;">
-            <p><button id="logoutBtn">Logout</button></p>
-
-            <input type="text" id="title" placeholder="Lunch">
-            <input type="number" id="amount" placeholder="150">
-            <select id="category">
-                <option>Food</option>
-                <option>Transport</option>
-                <option>Bills</option>
-            </select>
-            <button id="addBtn">Add Expense</button>
-
-            <h2 id="total">Total: PHP0</h2>
-
-            <select id="currency">
-                <option>USD</option>
-                <option>EUR</option>
-                <option>JPY</option>
-            </select>
-            <button id="convertBtn">Convert total</button>
-            <p id="converted"></p>
-
-            <div id="filters">
-                <button data-category="All">All</button>
-                <button data-category="Food">Food</button>
-                <button data-category="Transport">Transport</button>
-                <button data-category="Bills">Bills</button>
-            </div>
-
-            <ul id="list"></ul>
+      <div class="card">
+        <h2>Add expense</h2>
+        <div class="form-row">
+          <input type="text" id="title" placeholder="Lunch">
+          <input type="number" id="amount" placeholder="150">
+          <select id="category">
+            <option>Food</option>
+            <option>Transport</option>
+            <option>Bills</option>
+          </select>
         </div>
+        <button id="addBtn">Add expense</button>
+      </div>
 
-    </div>  
+      <div id="filters" class="filters">
+        <button data-category="All" class="active">All</button>
+        <button data-category="Food">Food</button>
+        <button data-category="Transport">Transport</button>
+        <button data-category="Bills">Bills</button>
+      </div>
 
-    <script src="script.js"></script>
+      <ul id="list"></ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

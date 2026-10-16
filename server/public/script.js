@@ -98,24 +98,49 @@ function showExpenses() {
         return currentFilter === "All" || expense.category === currentFilter;
     });
 
+    if (visibleExpenses.length === 0) {
+        list.innerHTML = '<li class="empty">No expenses yet</li>';
+    }
+
     visibleExpenses.forEach(function (expense) {
         const li = document.createElement("li");
-        li.textContent = expense.title + " - PHP" + expense.amount + " (" + expense.category + ")";
+
+        const name = document.createElement("span");
+        name.className = "name";
+        name.textContent = expense.title;
+
+        const tag = document.createElement("span");
+        tag.className = "tag " + expense.category.toLowerCase();
+        tag.textContent = expense.category;
+
+        const price = document.createElement("span");
+        price.className = "price";
+        price.textContent = "PHP" + expense.amount.toLocaleString();
+
+        const action = document.createElement("div");
+        price.className = "action";
         
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
+        editBtn.className = "secondary small";
         editBtn.addEventListener("click", function () {
             editExpense(expense.id);
         });
 
         const deleteBtn = document.createElement("button");
         deleteBtn.textContent = "Delete";
+        deleteBtn.className = "danger small";
         deleteBtn.addEventListener("click", function () {
             deleteExpense(expense.id);
         });
+
+        action.appendChild(editBtn);
+        action.appendChild(deleteBtn);
         
-        li.appendChild(editBtn);
-        li.appendChild(deleteBtn);
+        li.appendChild(name);
+        li.appendChild(tag);
+        li.appendChild(price);
+        li.appendChild(action);
         list.appendChild(li);
     });
 
@@ -124,7 +149,7 @@ function showExpenses() {
     }, 0);
 
     currentTotal = total;
-    totalText.textContent = "Total: PHP" + total;
+    totalText.textContent = "PHP" + total.toLocaleString;
 }
 
 async function deleteExpense(id) {
@@ -183,6 +208,12 @@ const filterButtons = document.querySelectorAll("#filters button");
 filterButtons.forEach(function (button) {
     button.addEventListener("click", function () {
         currentFilter = button.dataset.category;
+
+        filterButtons.forEach(function (b) {
+            b.classList.remove("active");
+        });
+        button.classList.add("active");
+        
         showExpenses();
     });
 });
