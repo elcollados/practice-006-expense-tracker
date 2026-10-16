@@ -149,7 +149,7 @@ function showExpenses() {
     }, 0);
 
     currentTotal = total;
-    totalText.textContent = "PHP" + total.toLocaleString;
+    totalText.textContent = "PHP" + total.toLocaleString();
 }
 
 async function deleteExpense(id) {
@@ -213,7 +213,7 @@ filterButtons.forEach(function (button) {
             b.classList.remove("active");
         });
         button.classList.add("active");
-        
+
         showExpenses();
     });
 });
