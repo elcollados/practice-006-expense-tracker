@@ -13,6 +13,11 @@ app.use(express.static("public"));
 app.use("/api/auth", authRouter );
 app.use("/api/expenses", requireLogin, expensesRouter);
 
+app.use(function (err, req, res, next) {
+  console.error(err);
+  res.status(500).json({ error: "Server error" });
+});
+
 setupDatabase()
   .then(function () {
     app.listen(PORT, function () {

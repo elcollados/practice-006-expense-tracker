@@ -55,7 +55,14 @@ async function sendAuth(path) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email, password: password })
     });
-    const data = await response.json();
+    
+    let data;
+    try {
+        data = await response.json();
+    } catch (error) {
+        authMessage.textContent = "Server error (" + response.status + ")";
+        return false;
+    }
 
     if (!response.ok) {
         authMessage.textContent = data.error;
@@ -66,19 +73,31 @@ async function sendAuth(path) {
 }
 
 document.getElementById("loginBtn").addEventListener("click", async function () {  
-    const data = await sendAuth("login");
-    if (!data) return;
+    authMessage.textContent = "Logging in...";
 
-    localStorage.setItem("token", data.token);
-    authMessage.textContent = "";
-    showScreen();
+    try {
+        const data = await sendAuth("login");
+        if (!data) return;
+
+        localStorage.setItem("token", data.token);
+        authMessage.textContent = "";
+        showScreen();
+    } catch (error) {
+        authMessage.textContent = "Error: " + error.message;
+    }
 });
 
 document.getElementById("registerBtn").addEventListener("click", async function () {
-    const data = await sendAuth("register");
-    if (!data) return;
+    authMessage.textContent = "Creating account...";
 
-    authMessage.textContent = "Account created. Now click Login.";
+    try {
+        const data = await sendAuth("register");
+        if (!data) return;
+
+        authMessage.textContent = "Account created. Now click login.";
+    } catch (error) {
+        authMessage.textContent = "Error: " + error.message;
+    }
 });
 
 document.getElementById("logoutBtn").addEventListener("click", logout);
@@ -118,7 +137,7 @@ function showExpenses() {
         price.textContent = "PHP" + expense.amount.toLocaleString();
 
         const action = document.createElement("div");
-        price.className = "action";
+        action.className = "actions";
         
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
@@ -153,6 +172,11 @@ function showExpenses() {
 }
 
 async function deleteExpense(id) {
+    expenses = expenses.filter(function (e) {
+        return e.id !== id;
+    })
+    showExpenses();
+
     await api("/api/expenses/" + id, { method: "DELETE" });
     loadExpenses();
 }
@@ -187,11 +211,14 @@ addBtn.addEventListener("click", async function () {
     const amount = Number(document.getElementById("amount").value);
     const category = document.getElementById("category").value;
 
+    addBtn.disabled = true;
+
     const response = await api("/api/expenses", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: title, amount: amount, category:category })
     });
+
+    addBtn.disabled = false;
 
     if (!response.ok) {
         const data = await response.json();
@@ -238,4 +265,4 @@ convertBtn.addEventListener("click", async function () {
     }
 });
 
-showExpenses();
+showScreen();

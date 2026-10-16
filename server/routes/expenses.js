@@ -63,7 +63,7 @@ router.put("/:id", async function (req, res) {
         [req.body.title.trim(), Number(req.body.amount), id, req.userId]
     );
 
-    if (result.changes === 0) {
+    if (result.rowCount === 0) {
         return res.status(404).json({ error: "Not Found" });
     }
 
@@ -85,7 +85,7 @@ router.delete("/:id", async function (req, res) {
         return res.status(404).json({ error: "Not found" });
     }
  
-    res.json({ message: "Deleted "});
+    res.json({ message: "Deleted"});
 });
 
 module.exports = router;
