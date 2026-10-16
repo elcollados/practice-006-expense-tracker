@@ -1,5 +1,5 @@
 const express = require("express");
-const db = require("../db");
+const { pool } = require("../db");
 
 const router = express.Router();
 
@@ -17,14 +17,15 @@ function validateExpense(body) {
     return null;
 }
 
-router.get("/", function (req, res) {
-    const expenses = db
-    .prepare("SELECT * FROM expenses WHERE user_id = ?")
-    .all(req.userId);
-    res.json(expenses);
+router.get("/", async function (req, res) {
+    const result = await pool.query(
+        "SELECT id, title, amount, category FROM expenses WHERE user_id = $1 ORDER BY id",
+        [req.userId]
+    );
+    res.json(result.rows);
 });
 
-router.post("/", function (req, res) {
+router.post("/", async function (req, res) {
     const error = validateExpense(req.body);
     if (error) {
         return res.status(400).json({ error: error });
@@ -38,51 +39,52 @@ router.post("/", function (req, res) {
     const amount = Number(req.body.amount);
     const category = req.body.category;
 
-    const result = db
-        .prepare("INSERT INTO expenses (user_id, title, amount, category) VALUES (?, ?, ?, ?)")
-        .run(req.userId, title, amount, category);
+    const result = await pool.query(
+        "INSERT INTO expenses (user_id, title, amount, category) VALUES ($1, $2, $3, $4) RETURNING id, title, amount, category",
+        [req.userId, title, amount, category]
+    );
 
-    res.status(201).json({
-        id: Number(result.lastInsertRowid),
-        title: title,
-        amount: amount,
-        category: category
-    });
+    res.status(201).json(result.rows[0]);
 });
 
-router.put("/:id", function (req, res) {
+router.put("/:id", async function (req, res) {
     const id = Number(req.params.id);
+    if (!Number.isInteger(id)) {
+        return res.status(404).json({ error: "Not found" });
+    }
 
     const error = validateExpense(req.body);
     if (error) {
         return res.status(400).json({ error: error });
     }
 
-    const result = db
-        .prepare("UPDATE expenses SET title = ?, amount = ? WHERE id = ? AND user_id = ?")
-        .run(req.body.title.trim(), Number(req.body.amount), id, req.userId);
+    const result = await pool.query(
+        "UPDATE expenses SET title = $1, amount = $2 WHERE id = $3 AND user_id = $4 RETURNING id, title, amount, category",
+        [req.body.title.trim(), Number(req.body.amount), id, req.userId]
+    );
 
     if (result.changes === 0) {
         return res.status(404).json({ error: "Not Found" });
     }
 
-    const expense = db
-        .prepare("SELECT * FROM expenses WHERE id = ? AND user_id = ?")
-        .get(id, req.userId);
-    res.json(expense);
+    res.json(result.rows[0]);
 });
 
-router.delete("/:id", function (req, res) {
+router.delete("/:id", async function (req, res) {
     const id = Number(req.params.id);
-
-    const result = db
-    .prepare("DELETE FROM expenses WHERE id = ? AND user_id = ?")
-    .run(id, req.userId);
-
-    if (result.changes === 0) {
+    if (!Number.isInteger(id)) {
         return res.status(404).json({ error: "Not found" });
     }
 
+    const result = await pool.query(
+    "DELETE FROM expenses WHERE id = $1 AND user_id = $2",
+    [id, req.userId]
+    );
+
+    if (result.rowCount === 0) {
+        return res.status(404).json({ error: "Not found" });
+    }
+ 
     res.json({ message: "Deleted "});
 });
 

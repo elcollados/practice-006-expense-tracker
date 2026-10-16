@@ -1,22 +1,28 @@
-const { DatabaseSync } = require("node:sqlite");
+const { Pool } = require("pg");
 
-const db = new DatabaseSync("expenses.db");
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    max: 5
+});
 
-db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL UNIQUE,
-        password_hash TEXT NOT NULL
-    );
+async function setupDatabase() {
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email TEXT NOT NULL UNIQUE,
+            password_hash TEXT NOT NULL
+        )    
+    `);
+    
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS expenses (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id),
+            title TEXT NOT NULL,
+            amount DOUBLE PRECISION NOT NULL,
+            category TEXT
+        )
+    `);
+}
 
-    CREATE TABLE IF NOT EXISTS expenses (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        amount REAL NOT NULL,
-        category TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    );
-`);
-
-module.exports = db;
+module.exports = { pool, setupDatabase };
