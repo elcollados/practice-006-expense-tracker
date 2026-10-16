@@ -153,6 +153,11 @@ function showExpenses() {
 }
 
 async function deleteExpense(id) {
+    expenses = expenses.filter(function (e) {
+        return e.id !==id;
+    });
+    showExpenses();
+
     await api("/api/expenses/" + id, { method: "DELETE" });
     loadExpenses();
 }
@@ -187,11 +192,14 @@ addBtn.addEventListener("click", async function () {
     const amount = Number(document.getElementById("amount").value);
     const category = document.getElementById("category").value;
 
+    addBtn.disabled = true;
+
     const response = await api("/api/expenses", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: title, amount: amount, category:category })
     });
+
+    addBtn.disabled = false;
 
     if (!response.ok) {
         const data = await response.json();
