@@ -266,3 +266,7 @@ convertBtn.addEventListener("click", async function () {
 });
 
 showScreen();
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js");
+}
