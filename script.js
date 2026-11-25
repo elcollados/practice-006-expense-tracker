@@ -15,7 +15,7 @@ function showExpenses() {
 
     const visibleExpense = expenses.filter(function (expense) {
         return currentFilter === "All" || expense.category === currentFilter;
-    })
+    });
 
     visibleExpense.forEach(function (expense) {
         const li = document.createElement("li");

@@ -53,10 +53,6 @@ const authLimiter = rateLimit({
   message: { error: "Too many failed attempts, try again in 15 minutes" }
 });
 
-app.get("/api/my-ip", function (req, res) {
-  res.json({ ip: req.ip, forwarded: req.headers["x-forwarded-for"] });
-});
-
 app.use("/api", apiLimiter);
 app.use("/api/auth", authLimiter, authRouter );
 app.use("/api/expenses", requireLogin, expensesRouter);

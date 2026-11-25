@@ -57,6 +57,7 @@
           </select>
         </div>
         <button id="addBtn">Add expense</button>
+        <p id="addError" class="error"></p>
       </div>
 
       <div id="filters" class="filters">
@@ -69,6 +70,21 @@
       <ul id="list"></ul>
     </div>
   </div>
+
+  <dialog id="editDialog">
+    <form id="editForm">
+      <h2>Edit expense</h2>
+      <div class="form-row">
+        <input type="text" id="editTitle" placeholder="Title">
+        <input type="number" id="editAmount" placeholder="Amount">
+      </div>
+      <p id="editError" class="error"></p>
+      <div class="button-row">
+        <button type="submit">Save</button>
+        <button type="button" id="cancelEditBtn" class="secondary">Cancel</button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="script.js"></script>
 </body>

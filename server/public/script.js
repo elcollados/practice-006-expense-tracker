@@ -6,6 +6,14 @@ const authSection = document.getElementById("authSection");
 const appSection = document.getElementById("appSection");
 const authMessage = document.getElementById("authMessage");
 
+const editDialog = document.getElementById("editDialog");
+const editForm = document.getElementById("editForm");
+const editTitle = document.getElementById("editTitle");
+const editAmount = document.getElementById("editAmount");
+const editError = document.getElementById("editError");
+
+let editingId = null;
+
 let expenses = [];
 let currentFilter = "All";
 let currentTotal = 0;
@@ -181,36 +189,47 @@ async function deleteExpense(id) {
     loadExpenses();
 }
 
-async function editExpense(id) { 
+function editExpense(id) { 
     const expense = expenses.find(function (e) {
         return e.id === id;
     });
 
-    const newTitle = prompt("New title:", expense.title);
-    const newAmount = prompt("New amount:", expense.amount);
+    editingId = id;
+    editTitle.value = expense.title;
+    editAmount.value = expense.amount;
+    editError.textContent = "";
+    editDialog.showModel();
+}
 
-    if (newTitle === null || newAmount === null) return;
+document.getElementById("cancelEditBtn").addEventListener("click", function () {
+    editDialog.close();
+});
 
-    const response = await api("/api/expenses/" + id, {
+editForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const response = await api("/api/expenses/" + editingId, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: newTitle, amount: newAmount })
+        body: JSON.stringify({ title: editTitle.value, amount: editAmount.value })
     });
 
     if (!response.ok) {
         const data = await response.json();
-        alert(data.error);
+        editError.textContent = data.error;
         return;
     }
 
+    editDialog.close();
     loadExpenses();
-}
+});
 
 addBtn.addEventListener("click", async function () {
     const title = document.getElementById("title").value;
     const amount = Number(document.getElementById("amount").value);
     const category = document.getElementById("category").value;
+    const addError = document.getElementById("addError");
 
+    addError.textContent = "";
     addBtn.disabled = true;
 
     const response = await api("/api/expenses", {
@@ -222,10 +241,12 @@ addBtn.addEventListener("click", async function () {
 
     if (!response.ok) {
         const data = await response.json();
-        alert(data.error);
+        addError.textContent = data.error;
         return;
     }
     
+    document.getElementById("title").value = "";
+    document.getElementById("amount").value = "";
     loadExpenses();
 });
 
