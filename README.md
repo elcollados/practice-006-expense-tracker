@@ -11,12 +11,17 @@ A simple web app to record daily expenses, built with plain HTML, CSS, and JavaS
 - Converts the total to USD, EUR, or JPY using live rates
 - Saves data in the browser (localStorage), so it stays after refresh
 
-## Technologies
+## Screenshot
+
+![Expense Tracker screenshot](Track.png)
+
+## Tools Used
 
 - HTML
 - CSS
 - JavaScript
 - [Frankfurter API](https://frankfurter.dev) for currency rates
+
 
 ## What I learned
 
